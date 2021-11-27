@@ -1,0 +1,45 @@
+group 'com.doggiex.flutter_baidu_mapapi_map'
+version '1.0'
+
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath 'com.android.tools.build:gradle:4.1.0'
+    }
+}
+
+rootProject.allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+apply plugin: 'com.android.library'
+
+android {
+    compileSdkVersion 28
+
+    defaultConfig {
+        minSdkVersion 16
+    }
+    lintOptions {
+        disable 'InvalidPackage'
+    }
+
+}
+
+repositories {
+    mavenLocal()
+}
+
+
+dependencies {
+    implementation fileTree(includes: ['*.jar'], dir: 'libs')
+    implementation rootProject.findProject(":flutter_baidu_mapapi_base")
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.0.0'
+}
