@@ -1,4 +1,4 @@
-package android.src.main.java.com.baidu.bmfmap.utils;
+package com.baidu.bmfmap.utils;
 
 public class Env {
     public static Boolean DEBUG = false;

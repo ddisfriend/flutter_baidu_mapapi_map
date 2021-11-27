@@ -1,4 +1,4 @@
-package android.src.main.java.com.baidu.bmfmap.map.maphandler;
+package com.baidu.bmfmap.map.maphandler;
 
 /**
  * 地图有些属性没有get接口，这个lei就用来暂存这些属性状态，供flutter端获取

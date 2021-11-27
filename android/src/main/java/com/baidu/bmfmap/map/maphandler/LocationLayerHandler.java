@@ -1,4 +1,4 @@
-package android.src.main.java.com.baidu.bmfmap.map.maphandler;
+package com.baidu.bmfmap.map.maphandler;
 
 import android.content.Context;
 import android.graphics.Color;

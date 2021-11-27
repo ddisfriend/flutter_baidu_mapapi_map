@@ -1,4 +1,4 @@
-package android.src.main.java.com.baidu.bmfmap.map.overlayHandler;
+package com.baidu.bmfmap.map.overlayHandler;
 
 public class OverlayCommon{
 

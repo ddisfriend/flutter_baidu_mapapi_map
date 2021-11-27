@@ -1,4 +1,4 @@
-package android.src.main.java.com.baidu.bmfmap.map.maphandler;
+package com.baidu.bmfmap.map.maphandler;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -1,4 +1,4 @@
-package android.src.main.java.com.baidu.bmfmap.utils;
+package com.baidu.bmfmap.utils;
 
 public class Constants {
     public static final String VIEW_METHOD_CHANNEL_PREFIX = "flutter_bmfmap/map_";

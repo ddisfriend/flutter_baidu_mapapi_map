@@ -1,4 +1,4 @@
-package android.src.main.java.com.baidu.bmfmap.utils;
+package com.baidu.bmfmap.utils;
 
 import android.os.Handler;
 import android.os.Looper;

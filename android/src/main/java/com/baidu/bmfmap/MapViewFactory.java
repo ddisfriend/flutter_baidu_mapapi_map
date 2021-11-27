@@ -1,4 +1,4 @@
-package android.src.main.java.com.baidu.bmfmap;
+package com.baidu.bmfmap;
 
 import java.util.Map;
 

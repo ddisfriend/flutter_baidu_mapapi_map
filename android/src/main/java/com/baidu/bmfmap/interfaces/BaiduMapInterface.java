@@ -1,4 +1,4 @@
-package android.src.main.java.com.baidu.bmfmap.interfaces;
+package com.baidu.bmfmap.interfaces;
 
 import com.baidu.mapapi.map.LogoPosition;
 import com.baidu.mapapi.model.LatLng;
