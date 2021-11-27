@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 import 'dart:ui';
 
@@ -13,6 +14,7 @@ mixin MarkerBinding {
   BuildContext? bindingContext;
 
   Future<Uint8List?> widgetToData(Widget widget) async {
+    final completer = Completer<Uint8List?>();
     var ratio = 1.0;
     if (null != bindingContext) {
       ratio = MediaQuery.of(bindingContext!).devicePixelRatio;
@@ -24,14 +26,18 @@ mixin MarkerBinding {
       child: widget,
     );
 
-    var renderObject =
-        globalKey.currentContext?.findRenderObject() as RenderRepaintBoundary?;
-    if (null != renderObject) {
-      var image = await renderObject.toImage(pixelRatio: ratio);
-      var byteData = await image.toByteData(format: ImageByteFormat.png);
-      if (null != byteData) {
-        return byteData.buffer.asUint8List();
+    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
+      var renderObject = globalKey.currentContext?.findRenderObject()
+          as RenderRepaintBoundary?;
+      if (null != renderObject) {
+        var image = await renderObject.toImage(pixelRatio: ratio);
+        var byteData = await image.toByteData(format: ImageByteFormat.png);
+        if (null != byteData) {
+          completer.complete(byteData.buffer.asUint8List());
+        }
       }
-    }
+    });
+
+    return completer.future;
   }
 }
