@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart';
 import 'package:flutter_baidu_mapapi_map/src/map/bmf_projection.dart';
+import 'package:flutter_baidu_mapapi_map/src/map/marker_binding.dart';
 import 'package:flutter_baidu_mapapi_map/src/models/bmf_baseindoormap_info.dart';
 import 'package:flutter_baidu_mapapi_map/src/models/bmf_custommap_option.dart';
 import 'package:flutter_baidu_mapapi_map/src/models/bmf_heatmap.dart';
@@ -19,6 +20,7 @@ import 'package:flutter_baidu_mapapi_map/src/models/overlays/bmf_polygon.dart';
 import 'package:flutter_baidu_mapapi_map/src/models/overlays/bmf_polyline.dart';
 import 'package:flutter_baidu_mapapi_map/src/models/overlays/bmf_text.dart';
 import 'package:flutter_baidu_mapapi_map/src/models/overlays/bmf_tile.dart';
+import 'package:flutter_baidu_mapapi_map/src/models/overlays/bmf_widget_marker.dart';
 import 'package:flutter_baidu_mapapi_map/src/private/bmf_method_channel_handler.dart';
 import 'package:flutter_baidu_mapapi_map/src/private/mapdispatcher/bmf_map_dispatcher_factory.dart';
 
@@ -33,7 +35,10 @@ class BMFMapController {
 
   late BMFProjection _BMFProjection;
 
-  BMFMapController.withId(int id) {
+  late MarkerBinding _markerBinding;
+
+  BMFMapController.withId(int id, MarkerBinding binding) {
+    _markerBinding = binding;
     _init(id);
   }
 
@@ -305,8 +310,10 @@ class BMFMapController {
     required Color congestion,
     required Color severeCongestion,
   }) async {
-    return await BMFMapDispatcherFactory().mapStatusDispatcher
-        .setCustomTrafficColor(_mapChannel, smooth, slow, congestion, severeCongestion);
+    return await BMFMapDispatcherFactory()
+        .mapStatusDispatcher
+        .setCustomTrafficColor(
+            _mapChannel, smooth, slow, congestion, severeCongestion);
   }
 
   /// 更新地图新状态
@@ -316,9 +323,11 @@ class BMFMapController {
   /// animateDurationMs 动画更新时间
   ///
   /// bool 成功返回true 失败false
-  Future<bool> setNewMapStatus({required BMFMapStatus mapStatus, int? animateDurationMs}) async {
+  Future<bool> setNewMapStatus(
+      {required BMFMapStatus mapStatus, int? animateDurationMs}) async {
     return await BMFMapDispatcherFactory.instance.mapStatusDispatcher
-        .setNewMapStatus(_mapChannel, mapStatus: mapStatus, animateDurationMs: animateDurationMs);
+        .setNewMapStatus(_mapChannel,
+            mapStatus: mapStatus, animateDurationMs: animateDurationMs);
   }
 
   /// 按像素移动地图中心点(Android独有)
@@ -330,9 +339,11 @@ class BMFMapController {
   /// animateDurationMs 动画更新时间
   ///
   /// bool 成功返回true 失败false
-  Future<bool> setScrollBy(int xPixel, int yPixel, {int? animateDurationMs}) async {
+  Future<bool> setScrollBy(int xPixel, int yPixel,
+      {int? animateDurationMs}) async {
     return await BMFMapDispatcherFactory.instance.mapStatusDispatcher
-        .setScrollBy(_mapChannel, xPixel, yPixel, animateDurationMs: animateDurationMs);
+        .setScrollBy(_mapChannel, xPixel, yPixel,
+            animateDurationMs: animateDurationMs);
   }
 
   /// 根据给定增量缩放地图级别(Android独有)
@@ -356,9 +367,11 @@ class BMFMapController {
   /// animateDurationMs 动画更新时间
   ///
   /// bool 成功返回true 失败false
-  Future<bool> setZoomPointBy(double amount, BMFPoint focus, {int? animateDurationMs}) async {
+  Future<bool> setZoomPointBy(double amount, BMFPoint focus,
+      {int? animateDurationMs}) async {
     return await BMFMapDispatcherFactory.instance.mapStatusDispatcher
-        .setZoomPointBy(_mapChannel, amount, focus, animateDurationMs: animateDurationMs);
+        .setZoomPointBy(_mapChannel, amount, focus,
+            animateDurationMs: animateDurationMs);
   }
 
   /// 设置地图缩放级别(Android独有)
@@ -382,9 +395,11 @@ class BMFMapController {
   /// animateDurationMs 动画更新时间(android 独有)
   ///
   /// bool 成功返回true 失败false
-  Future<bool> setCenterCoordinate(BMFCoordinate coordinate, bool animated, {int? animateDurationMs}) async {
+  Future<bool> setCenterCoordinate(BMFCoordinate coordinate, bool animated,
+      {int? animateDurationMs}) async {
     return await BMFMapDispatcherFactory.instance.mapStatusDispatcher
-        .setCenterCoordinate(_mapChannel, coordinate, animated, animateDurationMs: animateDurationMs);
+        .setCenterCoordinate(_mapChannel, coordinate, animated,
+            animateDurationMs: animateDurationMs);
   }
 
   /// 设置地图中心点以及缩放级别(Android 独有)
@@ -400,7 +415,8 @@ class BMFMapController {
     required double zoom,
     int? animateDurationMs,
   }) async {
-    return await BMFMapDispatcherFactory.instance.mapStatusDispatcher.setNewLatLngZoomDispatcher(
+    return await BMFMapDispatcherFactory.instance.mapStatusDispatcher
+        .setNewLatLngZoomDispatcher(
       _mapChannel,
       coordinate: coordinate,
       zoom: zoom,
@@ -441,7 +457,8 @@ class BMFMapController {
   /// animated 是否采用动画效果 (ios 独有)
   ///
   /// bool 成功返回true 失败false
-  Future<bool> setVisibleMapBounds(BMFCoordinateBounds visibleMapBounds, bool animated) async {
+  Future<bool> setVisibleMapBounds(
+      BMFCoordinateBounds visibleMapBounds, bool animated) async {
     return await BMFMapDispatcherFactory.instance.mapStatusDispatcher
         .setVisibleMapBounds(_mapChannel, visibleMapBounds, animated);
   }
@@ -460,7 +477,8 @@ class BMFMapController {
     required EdgeInsets insets,
     required bool animated,
   }) async {
-    return await BMFMapDispatcherFactory.instance.mapStatusDispatcher.setVisibleMapRectWithPadding(
+    return await BMFMapDispatcherFactory.instance.mapStatusDispatcher
+        .setVisibleMapRectWithPadding(
       _mapChannel,
       visibleMapBounds,
       insets,
@@ -492,7 +510,8 @@ class BMFMapController {
     bool enableDirection = true,
     String? customMarker,
   }) async {
-    return await BMFMapDispatcherFactory.instance.mapUserLocationDispatcher.setUserTrackingMode(
+    return await BMFMapDispatcherFactory.instance.mapUserLocationDispatcher
+        .setUserTrackingMode(
       _mapChannel,
       userTrackingMode,
       enableDirection,
@@ -525,7 +544,8 @@ class BMFMapController {
   /// [BMFUserLocationDisplayParam]userlocationDisplayParam	样式参数
   ///
   /// bool 成功返回true 失败false
-  Future<bool> updateLocationViewWithParam(BMFUserLocationDisplayParam userlocationDisplayParam) async {
+  Future<bool> updateLocationViewWithParam(
+      BMFUserLocationDisplayParam userlocationDisplayParam) async {
     return await BMFMapDispatcherFactory.instance.mapUserLocationDispatcher
         .setUpdateLocationViewWithParam(_mapChannel, userlocationDisplayParam);
   }
@@ -536,7 +556,18 @@ class BMFMapController {
   ///
   /// bool 成功返回true 失败false
   Future<bool> addMarker(BMFMarker marker) async {
-    return await BMFMapDispatcherFactory.instance.markerDispatcher.addMarker(_mapChannel, marker);
+    return await BMFMapDispatcherFactory.instance.markerDispatcher
+        .addMarker(_mapChannel, marker);
+  }
+
+  /// 地图添加Widget Marker
+  ///
+  /// bool 成功返回true 失败false
+  Future<bool> addWidgetMarker(BMFWidgetMarker marker) async {
+    var uint8list = await _markerBinding.widgetToData(marker.widget);
+    marker.widgetData = uint8list;
+    return await BMFMapDispatcherFactory.instance.markerDispatcher
+        .addWidgetMarker(_mapChannel, marker);
   }
 
   /// 地图添加Markers
@@ -545,22 +576,26 @@ class BMFMapController {
   ///
   /// bool 成功返回true 失败false
   Future<bool> addMarkers(List<BMFMarker> markers) async {
-    return await BMFMapDispatcherFactory.instance.markerDispatcher.addMarkers(_mapChannel, markers);
+    return await BMFMapDispatcherFactory.instance.markerDispatcher
+        .addMarkers(_mapChannel, markers);
   }
 
   /// 地图添加[BMFInfoWindow] infoWindow
   Future<bool> addInfoWindow(BMFInfoWindow infoWindow) async {
-    return await BMFMapDispatcherFactory.instance.markerDispatcher.addInfoWindow(_mapChannel, infoWindow);
+    return await BMFMapDispatcherFactory.instance.markerDispatcher
+        .addInfoWindow(_mapChannel, infoWindow);
   }
 
   /// 地图批量添加[BMFInfoWindow] infoWindow
   Future<bool> addInfoWindows(List<BMFInfoWindow> infoWindows) async {
-    return await BMFMapDispatcherFactory.instance.markerDispatcher.addInfoWindows(_mapChannel, infoWindows);
+    return await BMFMapDispatcherFactory.instance.markerDispatcher
+        .addInfoWindows(_mapChannel, infoWindows);
   }
 
   /// 地图移除[BMFInfoWindow] infoWindow
   Future<bool> removeInfoWindow(BMFInfoWindow infoWindow) async {
-    return await BMFMapDispatcherFactory.instance.markerDispatcher.removeInfoWindow(_mapChannel, infoWindow);
+    return await BMFMapDispatcherFactory.instance.markerDispatcher
+        .removeInfoWindow(_mapChannel, infoWindow);
   }
 
   /// 地图指定删除Marker
@@ -569,7 +604,8 @@ class BMFMapController {
   ///
   /// bool 成功返回true 失败false
   Future<bool> removeMarker(BMFMarker marker) async {
-    return await BMFMapDispatcherFactory.instance.markerDispatcher.removeMarker(_mapChannel, marker);
+    return await BMFMapDispatcherFactory.instance.markerDispatcher
+        .removeMarker(_mapChannel, marker);
   }
 
   /// 地图批量删除Markers
@@ -578,28 +614,32 @@ class BMFMapController {
   ///
   /// bool 成功返回true 失败false
   Future<bool> removeMarkers(List<BMFMarker> markers) async {
-    return await BMFMapDispatcherFactory.instance.markerDispatcher.removeMarkers(_mapChannel, markers);
+    return await BMFMapDispatcherFactory.instance.markerDispatcher
+        .removeMarkers(_mapChannel, markers);
   }
 
   /// 地图清除所有Markers
   ///
   /// bool 成功返回true 失败false
   Future<bool> cleanAllMarkers() async {
-    return await BMFMapDispatcherFactory.instance.markerDispatcher.cleanAllMarkers(_mapChannel);
+    return await BMFMapDispatcherFactory.instance.markerDispatcher
+        .cleanAllMarkers(_mapChannel);
   }
 
   /// 选中marker
   ///
   /// bool 成功返回true 失败false
   Future<bool> selectMarker(BMFMarker marker) async {
-    return await BMFMapDispatcherFactory.instance.markerDispatcher.selectMarker(_mapChannel, marker);
+    return await BMFMapDispatcherFactory.instance.markerDispatcher
+        .selectMarker(_mapChannel, marker);
   }
 
   /// 取消指定的marker的选中状态
   ///
   /// bool 成功返回true 失败false
   Future<bool> deselectMarker(BMFMarker marker) async {
-    return await BMFMapDispatcherFactory.instance.markerDispatcher.deselectMarker(_mapChannel, marker);
+    return await BMFMapDispatcherFactory.instance.markerDispatcher
+        .deselectMarker(_mapChannel, marker);
   }
 
   /// 地图添加Polyine
@@ -608,7 +648,8 @@ class BMFMapController {
   ///
   /// bool 成功返回true 失败false
   Future<bool> addPolyline(BMFPolyline polyline) async {
-    return await BMFMapDispatcherFactory.instance.overlayDispatcher.addPolyline(_mapChannel, polyline);
+    return await BMFMapDispatcherFactory.instance.overlayDispatcher
+        .addPolyline(_mapChannel, polyline);
   }
 
   /// 地图添加Arcline
@@ -617,7 +658,8 @@ class BMFMapController {
   ///
   /// bool 成功返回true 失败false
   Future<bool> addArcline(BMFArcLine arcline) async {
-    return await BMFMapDispatcherFactory.instance.overlayDispatcher.addArcline(_mapChannel, arcline);
+    return await BMFMapDispatcherFactory.instance.overlayDispatcher
+        .addArcline(_mapChannel, arcline);
   }
 
   /// 地图添加Polygon
@@ -626,7 +668,8 @@ class BMFMapController {
   ///
   /// bool 成功返回true 失败false
   Future<bool> addPolygon(BMFPolygon polygon) async {
-    return await BMFMapDispatcherFactory.instance.overlayDispatcher.addPolygon(_mapChannel, polygon);
+    return await BMFMapDispatcherFactory.instance.overlayDispatcher
+        .addPolygon(_mapChannel, polygon);
   }
 
   /// 地图添加Circle
@@ -635,7 +678,8 @@ class BMFMapController {
   ///
   /// bool 成功返回true 失败false
   Future<bool> addCircle(BMFCircle circle) async {
-    return await BMFMapDispatcherFactory.instance.overlayDispatcher.addCircle(_mapChannel, circle);
+    return await BMFMapDispatcherFactory.instance.overlayDispatcher
+        .addCircle(_mapChannel, circle);
   }
 
   /// 地图添加Dot
@@ -644,12 +688,14 @@ class BMFMapController {
   ///
   /// bool 成功返回true 失败false
   Future<bool> addDot(BMFDot dot) async {
-    return await BMFMapDispatcherFactory.instance.overlayDispatcher.addDot(_mapChannel, dot);
+    return await BMFMapDispatcherFactory.instance.overlayDispatcher
+        .addDot(_mapChannel, dot);
   }
 
   /// 地图添加[BMFText] Text
   Future<bool> addText(BMFText text) async {
-    return await BMFMapDispatcherFactory.instance.overlayDispatcher.addText(_mapChannel, text);
+    return await BMFMapDispatcherFactory.instance.overlayDispatcher
+        .addText(_mapChannel, text);
   }
 
   /// 地图添加Ground
@@ -658,7 +704,8 @@ class BMFMapController {
   ///
   /// bool 成功返回true 失败false
   Future<bool> addGround(BMFGround ground) async {
-    return await BMFMapDispatcherFactory.instance.overlayDispatcher.addGround(_mapChannel, ground);
+    return await BMFMapDispatcherFactory.instance.overlayDispatcher
+        .addGround(_mapChannel, ground);
   }
 
   /// 地图指定删除overlay
@@ -667,7 +714,8 @@ class BMFMapController {
   ///
   /// bool 成功返回true 失败false
   Future<bool> removeOverlay(String overlayId) async {
-    return await BMFMapDispatcherFactory.instance.overlayDispatcher.removeOverlay(_mapChannel, overlayId);
+    return await BMFMapDispatcherFactory.instance.overlayDispatcher
+        .removeOverlay(_mapChannel, overlayId);
   }
 
   /// 添加热力图
@@ -676,14 +724,16 @@ class BMFMapController {
   ///
   /// bool 成功返回true 失败false
   Future<bool> addHeatMap(BMFHeatMap heatMap) async {
-    return await BMFMapDispatcherFactory.instance.mapStatusDispatcher.addHeatMap(_mapChannel, heatMap);
+    return await BMFMapDispatcherFactory.instance.mapStatusDispatcher
+        .addHeatMap(_mapChannel, heatMap);
   }
 
   /// 删除热力图
   ///
   /// bool 成功返回true 失败false
   Future<bool> removeHeatMap() async {
-    return await BMFMapDispatcherFactory.instance.mapStatusDispatcher.removeHeatMap(_mapChannel);
+    return await BMFMapDispatcherFactory.instance.mapStatusDispatcher
+        .removeHeatMap(_mapChannel);
   }
 
   /// 显示热力图(在某些Android机型上，该方法执行无效)
@@ -692,7 +742,8 @@ class BMFMapController {
   ///
   /// bool 成功返回true 失败false
   Future<bool> showHeatMap(bool show) async {
-    return await BMFMapDispatcherFactory.instance.mapStatusDispatcher.showHeatMap(_mapChannel, show);
+    return await BMFMapDispatcherFactory.instance.mapStatusDispatcher
+        .showHeatMap(_mapChannel, show);
   }
 
   /// 添加瓦片图(在线瓦片图在某些Android机型上暂时不生效，等后续升级解决)
@@ -701,7 +752,8 @@ class BMFMapController {
   ///
   /// bool 成功返回true 失败false
   Future<bool> addTile(BMFTile tile) async {
-    return await BMFMapDispatcherFactory.instance.overlayDispatcher.addTile(_mapChannel, tile);
+    return await BMFMapDispatcherFactory.instance.overlayDispatcher
+        .addTile(_mapChannel, tile);
   }
 
   /// 移除瓦片图
@@ -709,7 +761,8 @@ class BMFMapController {
   /// [BMFTile] tile 瓦片图
   /// bool 成功返回true 失败false
   Future<bool> removeTile(BMFTile tile) async {
-    return await BMFMapDispatcherFactory.instance.overlayDispatcher.removeTile(_mapChannel, tile);
+    return await BMFMapDispatcherFactory.instance.overlayDispatcher
+        .removeTile(_mapChannel, tile);
   }
 
   /// 是否展示室内地图
@@ -807,14 +860,16 @@ class BMFMapController {
     required void Function(int? errorCode, String? path) error,
   }) async {
     return await BMFMapDispatcherFactory.instance.mapStatusDispatcher
-        .setCustomMapStyleWithOption(_mapChannel, customMapStyleOption, preload, success, error);
+        .setCustomMapStyleWithOption(
+            _mapChannel, customMapStyleOption, preload, success, error);
   }
 
   /// 地图代理回调
   ///
   /// native -> flutter
   Future<dynamic> _handlerMethod(MethodCall call) async {
-    if (_methodChannelHandler != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null) {
+      // ignore: unnecessary_null_comparison
       return await _methodChannelHandler.handlerMethod(call);
     }
   }
@@ -823,7 +878,8 @@ class BMFMapController {
   ///
   /// [BMFMapCallback] callback 回调接口
   void setMapDidLoadCallback({required BMFMapCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapDidLoadCallback(callback);
     }
   }
@@ -833,7 +889,8 @@ class BMFMapController {
   /// [BMFMapSuccessCallback] callback 回调接口
   void setMapDidFinishedRenderCallback(
       {required BMFMapSuccessCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapDidFinishedRenderCallback(callback);
     }
   }
@@ -843,7 +900,8 @@ class BMFMapController {
   /// [BMFMapOnDrawMapFrameCallback] callback 回调接口
   void setMapOnDrawMapFrameCallback(
       {required BMFMapOnDrawMapFrameCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapOnDrawMapFrameCallback(callback);
     }
   }
@@ -853,7 +911,8 @@ class BMFMapController {
   /// [BMFMapRegionChangeCallback] callback 回调接口
   void setMapRegionWillChangeCallback(
       {required BMFMapRegionChangeCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapRegionWillChangeCallback(callback);
     }
   }
@@ -863,7 +922,8 @@ class BMFMapController {
   /// [BMFMapRegionChangeCallback] callback 回调接口
   void setMapRegionDidChangeCallback(
       {required BMFMapRegionChangeCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapRegionDidChangeCallback(callback);
     }
   }
@@ -873,7 +933,8 @@ class BMFMapController {
   /// [BMFMapRegionChangeReasonCallback] callback 回调接口
   void setMapRegionWillChangeWithReasonCallback(
       {required BMFMapRegionChangeReasonCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapRegionWillChangeWithReasonCallback(callback);
     }
   }
@@ -883,7 +944,8 @@ class BMFMapController {
   /// [BMFMapRegionChangeReasonCallback] callback
   void setMapRegionDidChangeWithReasonCallback(
       {required BMFMapRegionChangeReasonCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapRegionDidChangeWithReasonCallback(callback);
     }
   }
@@ -895,7 +957,8 @@ class BMFMapController {
   /// polyline只返回了id 与 polylineOptions
   void setMapOnClickedOverlayCallback(
       {required BMFMapOnClickedOverlayCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapOnClickedOverlayCallback(callback);
     }
   }
@@ -905,7 +968,8 @@ class BMFMapController {
   /// [BMFMapOnClickedMapPoiCallback] callback 回调接口
   void setMapOnClickedMapPoiCallback(
       {required BMFMapOnClickedMapPoiCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapOnClickedMapPoiCallback(callback);
     }
   }
@@ -915,7 +979,8 @@ class BMFMapController {
   /// [BMFMapCoordinateCallback] callback 回调接口
   void setMapOnClickedMapBlankCallback(
       {required BMFMapCoordinateCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapOnClickedMapBlankCallback(callback);
     }
   }
@@ -925,7 +990,8 @@ class BMFMapController {
   /// [BMFMapCoordinateCallback] callback 回调接口
   void setMapOnDoubleClickCallback(
       {required BMFMapCoordinateCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapOnDoubleClickCallback(callback);
     }
   }
@@ -933,9 +999,9 @@ class BMFMapController {
   /// 设置长按地图时会回调接口
   ///
   /// [BMFMapCoordinateCallback] callback 回调接口
-  void setMapOnLongClickCallback(
-      {required BMFMapCoordinateCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+  void setMapOnLongClickCallback({required BMFMapCoordinateCallback callback}) {
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapOnLongClickCallback(callback);
     }
   }
@@ -945,7 +1011,8 @@ class BMFMapController {
   /// [BMFMapOnForceTouchCallback] callback 回调接口
   void setMapOnForceTouchCallback(
       {required BMFMapOnForceTouchCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapOnForceTouchCallback(callback);
     }
   }
@@ -954,7 +1021,8 @@ class BMFMapController {
   ///
   /// [BMFMapCallback] callback 回调接口
   void setMapStatusDidChangedCallback({required BMFMapCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapStatusDidChangedCallback(callback);
     }
   }
@@ -964,7 +1032,8 @@ class BMFMapController {
   /// [BMFMapInOrOutBaseIndoorMapCallback] callback 回调接口
   void setMapInOrOutBaseIndoorMapCallback(
       {required BMFMapInOrOutBaseIndoorMapCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapInOrOutBaseIndoorMapCallback(callback);
     }
   }
@@ -973,7 +1042,8 @@ class BMFMapController {
   ///
   /// [BMFMapMarkerCallback] callback 回调接口
   void setMapClickedMarkerCallback({required BMFMapMarkerCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapClickedMarkerCallback(callback);
     }
   }
@@ -985,7 +1055,8 @@ class BMFMapController {
   /// iOS 独有
   void setMaptDidSelectMarkerCallback(
       {required BMFMapMarkerCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMaptDidSelectMarkerCallback(callback);
     }
   }
@@ -997,7 +1068,8 @@ class BMFMapController {
   /// Android不支持该接口
   void setMapDidDeselectMarkerCallback(
       {required BMFMapMarkerCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapDidDeselectMarkerCallback(callback);
     }
   }
@@ -1006,7 +1078,8 @@ class BMFMapController {
   ///
   /// [BMFMapMarkerCallback] callback 回调接口
   void setMapDragMarkerCallback({required BMFMapDragMarkerCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapDragMarkerCallback(callback);
     }
   }
@@ -1016,7 +1089,8 @@ class BMFMapController {
   /// [BMFMapMarkerCallback] callback 回调接口
   void setMapDidClickedInfoWindowCallback(
       {required BMFMapMarkerCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapDidClickedInfoWindowCallback(callback);
     }
   }
@@ -1028,7 +1102,8 @@ class BMFMapController {
   /// ios不支持该接口
   void setMapRenderValidDataCallback(
       {required BMFMapRenderValidDataCallback callback}) {
-    if (_methodChannelHandler != null || callback != null) { // ignore: unnecessary_null_comparison
+    if (_methodChannelHandler != null || callback != null) {
+      // ignore: unnecessary_null_comparison
       _methodChannelHandler.setMapRenderValidDataCallback(callback);
     }
   }

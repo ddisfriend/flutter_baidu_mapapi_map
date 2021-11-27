@@ -2,12 +2,32 @@ import 'package:flutter/services.dart';
 import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:flutter_baidu_mapapi_map/src/models/bmf_infowindow.dart';
 import 'package:flutter_baidu_mapapi_map/src/models/overlays/bmf_marker.dart';
+import 'package:flutter_baidu_mapapi_map/src/models/overlays/bmf_widget_marker.dart';
 import 'bmf_map_method_id.dart' show BMFMarkerMethodId, BMFInfoWindowMethodId;
 
 /// marker处理类
 class BMFMarkerDispatcher {
   /// 地图添加Marker
   Future<bool> addMarker(MethodChannel _mapChannel, BMFMarker marker) async {
+    ArgumentError.checkNotNull(_mapChannel, "_mapChannel");
+    ArgumentError.checkNotNull(marker, "marker");
+
+    marker.methodChannel = _mapChannel;
+
+    bool result = false;
+    try {
+      result = (await _mapChannel.invokeMethod(
+              BMFMarkerMethodId.kMapAddMarkerMethod, marker.toMap() as dynamic))
+          as bool;
+    } on PlatformException catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
+  /// 地图添加Marker
+  Future<bool> addWidgetMarker(
+      MethodChannel _mapChannel, BMFWidgetMarker marker) async {
     ArgumentError.checkNotNull(_mapChannel, "_mapChannel");
     ArgumentError.checkNotNull(marker, "marker");
 
@@ -37,9 +57,8 @@ class BMFMarkerDispatcher {
     bool result = false;
     try {
       result = (await _mapChannel.invokeMethod(
-              BMFMarkerMethodId.kMapAddMarkersMethod,
-              markers.map((marker) => marker.toMap()).toList() as dynamic))
-          as bool;
+          BMFMarkerMethodId.kMapAddMarkersMethod,
+          markers.map((marker) => marker.toMap()).toList() as dynamic)) as bool;
     } on PlatformException catch (e) {
       print(e.toString());
     }
@@ -131,9 +150,8 @@ class BMFMarkerDispatcher {
     bool result = false;
     try {
       result = (await _mapChannel.invokeMethod(
-              BMFMarkerMethodId.kMapRemoveMarkersMethod,
-              markers.map((marker) => marker.toMap()).toList() as dynamic))
-          as bool;
+          BMFMarkerMethodId.kMapRemoveMarkersMethod,
+          markers.map((marker) => marker.toMap()).toList() as dynamic)) as bool;
     } on PlatformException catch (e) {
       print(e.toString());
     }

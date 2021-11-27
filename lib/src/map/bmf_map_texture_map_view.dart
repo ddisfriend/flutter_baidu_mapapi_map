@@ -6,6 +6,7 @@ import 'package:flutter_baidu_mapapi_map/src/map/bmf_map_controller.dart';
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart'
     show BMFNativeViewType;
 import 'package:flutter_baidu_mapapi_map/src/map/bmf_map_view.dart';
+import 'package:flutter_baidu_mapapi_map/src/map/marker_binding.dart';
 import 'package:flutter_baidu_mapapi_map/src/models/bmf_map_options.dart';
 
 /// textureMapView,android设备独有
@@ -33,7 +34,7 @@ class BMFTextureMapWidget extends StatefulWidget {
   _BMFTextureMapWidgetState createState() => _BMFTextureMapWidgetState();
 }
 
-class _BMFTextureMapWidgetState extends State<BMFTextureMapWidget> {
+class _BMFTextureMapWidgetState extends State<BMFTextureMapWidget> with MarkerBinding{
   @override
   Widget build(BuildContext context) {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
@@ -46,7 +47,7 @@ class _BMFTextureMapWidgetState extends State<BMFTextureMapWidget> {
         hitTestBehavior: widget.hitTestBehavior, // 渗透点击事件
         layoutDirection: widget.layoutDirection, // 嵌入视图文本方向
         creationParams: widget.mapOptions!.toMap() as dynamic, // 向视图传递参数
-        creationParamsCodec: new StandardMessageCodec(), // 编解码器类型
+        creationParamsCodec: StandardMessageCodec(), // 编解码器类型
       );
     } else {
       return Text('flutter_bmfmap插件尚不支持$defaultTargetPlatform');
@@ -75,6 +76,6 @@ class _BMFTextureMapWidgetState extends State<BMFTextureMapWidget> {
     if (widget.onBMFMapCreated == null) { // ignore: unnecessary_null_comparison
       return;
     }
-    widget.onBMFMapCreated(new BMFMapController.withId(id));
+    widget.onBMFMapCreated(BMFMapController.withId(id,this));
   }
 }

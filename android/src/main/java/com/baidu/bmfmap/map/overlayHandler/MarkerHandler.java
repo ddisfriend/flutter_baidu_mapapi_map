@@ -17,6 +17,8 @@ import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.Overlay;
 import com.baidu.mapapi.model.LatLng;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -150,21 +152,25 @@ public class MarkerHandler extends OverlayHandler {
 
         setScreenLockPoint(argument, markerOptions);
 
+        Bundle bundle = new Bundle();
+        bundle.putString("id", id);
+
         // icon是必须的
         String icon = (String) argument.get("icon");
-        if (TextUtils.isEmpty(icon)) {
-            return false;
-        }
-
-        if (!setMarkerOptions(argument, markerOptions, id, icon)) {
-            return false;
+        byte[] bytes = (byte[]) argument.get("widget");
+        
+        if (!TextUtils.isEmpty(icon)) {
+            if (!setMarkerOptions(argument, markerOptions, id, icon)) {
+                return false;
+            }
+            bundle.putString("icon", icon);
+        }else if(null != bytes){
+            Bitmap b = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+            BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(b);
+            markerOptions.icon(bitmapDescriptor);
         }
 
         Overlay overlay = mBaiduMap.addOverlay(markerOptions);
-
-        Bundle bundle = new Bundle();
-        bundle.putString("id", id);
-        bundle.putString("icon", icon);
 
         overlay.setExtraInfo(bundle);
 

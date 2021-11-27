@@ -1,3 +1,7 @@
+import 'dart:async';
+import 'dart:typed_data';
+import 'dart:ui';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_baidu_mapapi_base/flutter_baidu_mapapi_base.dart'
     show BMFNativeViewType;
 import 'package:flutter_baidu_mapapi_map/src/map/bmf_map_controller.dart';
+import 'package:flutter_baidu_mapapi_map/src/map/marker_binding.dart';
 import 'package:flutter_baidu_mapapi_map/src/models/bmf_map_options.dart';
 
 /// 地图创建回调
@@ -37,13 +42,25 @@ class BMFMapWidget extends StatefulWidget {
   _BMFMapWidgetState createState() => _BMFMapWidgetState();
 }
 
-class _BMFMapWidgetState extends State<BMFMapWidget> {
-  final _gestureRecognizers = <Factory<OneSequenceGestureRecognizer>>[
+class _BMFMapWidgetState extends State<BMFMapWidget> with MarkerBinding {
+  final _gestureRecognizers = <Factory<OneSequenceGestureRecognizer>>{
     Factory<OneSequenceGestureRecognizer>(() => EagerGestureRecognizer()),
-  ].toSet();
+  };
+
+  @override
+  void initState() {
+    bindingContext = context;
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
+    return Stack(
+      children: [if (markerView != null) markerView!, _buildPlatformView()],
+    );
+  }
+
+  Widget _buildPlatformView() {
     if (defaultTargetPlatform == TargetPlatform.iOS) {
       // iOS
       return UiKitView(
@@ -53,7 +70,7 @@ class _BMFMapWidgetState extends State<BMFMapWidget> {
         hitTestBehavior: widget.hitTestBehavior, // 渗透点击事件
         layoutDirection: widget.layoutDirection, // 嵌入视图文本方向
         creationParams: widget.mapOptions!.toMap() as dynamic, // 向视图传递参数
-        creationParamsCodec: new StandardMessageCodec(), // 编解码器类型
+        creationParamsCodec: StandardMessageCodec(), // 编解码器类型
       );
     } else if (defaultTargetPlatform == TargetPlatform.android) {
       return AndroidView(
@@ -62,7 +79,7 @@ class _BMFMapWidgetState extends State<BMFMapWidget> {
         hitTestBehavior: widget.hitTestBehavior, // 渗透点击事件
         layoutDirection: widget.layoutDirection, // 嵌入视图文本方向
         creationParams: widget.mapOptions!.toMap() as dynamic, // 向视图传递参数
-        creationParamsCodec: new StandardMessageCodec(), // 编解码器类型
+        creationParamsCodec: StandardMessageCodec(), // 编解码器类型
       );
     } else {
       return Text('flutter_bmfmap插件尚不支持$defaultTargetPlatform');
@@ -70,11 +87,12 @@ class _BMFMapWidgetState extends State<BMFMapWidget> {
   }
 
   void _onPlatformViewCreated(int id) {
-    if (widget.onBMFMapCreated == null) { // ignore: unnecessary_null_comparison
+    if (widget.onBMFMapCreated == null) {
+      // ignore: unnecessary_null_comparison
       return;
     }
 
-    widget.onBMFMapCreated(new BMFMapController.withId(id));
+    widget.onBMFMapCreated(BMFMapController.withId(id, this));
   }
 
   @override
