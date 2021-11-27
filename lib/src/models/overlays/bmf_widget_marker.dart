@@ -8,36 +8,6 @@ import 'package:flutter_baidu_mapapi_map/flutter_baidu_mapapi_map.dart';
 import 'package:flutter_baidu_mapapi_map/src/models/overlays/bmf_overlay.dart';
 import 'package:flutter_baidu_mapapi_map/src/private/mapdispatcher/bmf_map_dispatcher_factory.dart';
 
-/// marker拖拽状态枚举
-enum BMFMarkerDragState {
-  ///< 静止状态.
-  None,
-
-  ///< 开始拖动
-  Starting,
-
-  ///< 拖动中
-  Dragging,
-
-  ///< 取消拖动
-  Canceling,
-
-  ///< 拖动结束
-  Ending
-}
-
-/// marker展示优先级 iOS独有
-class BMFMarkerDisplayPriority {
-  /// 常规marker级别高
-  static const int High = 750;
-
-  /// 常规marker级别中，其中罗盘模式下，罗盘中的图片使用本级别,精度圈使用本级别。
-  static const int Middle = 500;
-
-  /// 常规marker级别低
-  static const int Low = 250;
-}
-
 /// 大头针
 class BMFWidgetMarker extends BMFOverlay {
   /// 标题

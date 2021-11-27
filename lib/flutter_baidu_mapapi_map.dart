@@ -25,6 +25,7 @@ export 'src/models/overlays/bmf_dot.dart';
 export 'src/models/overlays/bmf_ground.dart';
 
 export 'src/models/overlays/bmf_marker.dart';
+export 'src/models/overlays/bmf_widget_marker.dart';
 export 'src/models/overlays/bmf_overlay.dart';
 export 'src/models/overlays/bmf_polygon.dart';
 export 'src/models/overlays/bmf_polyline.dart';
