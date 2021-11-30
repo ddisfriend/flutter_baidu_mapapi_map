@@ -564,10 +564,16 @@ class BMFMapController {
   ///
   /// bool 成功返回true 失败false
   Future<bool> addWidgetMarker(BMFWidgetMarker marker) async {
-    var uint8list = await _markerBinding.widgetToData(marker.widget);
-    marker.widgetData = uint8list;
-    return await BMFMapDispatcherFactory.instance.markerDispatcher
-        .addWidgetMarker(_mapChannel, marker);
+    try {
+      var uint8list = await _markerBinding.widgetToData(marker.widget);
+      print('转化为图片大小：${uint8list?.length}');
+      marker.widgetData = uint8list;
+      return await BMFMapDispatcherFactory.instance.markerDispatcher
+          .addWidgetMarker(_mapChannel, marker);
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   /// 地图添加Markers

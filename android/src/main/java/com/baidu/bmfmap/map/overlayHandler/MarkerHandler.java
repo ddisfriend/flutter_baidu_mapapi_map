@@ -133,11 +133,11 @@ public class MarkerHandler extends OverlayHandler {
             return false;
         }
 
-        if (!argument.containsKey("id")
-                || !argument.containsKey("position")
-                || !argument.containsKey("icon")) {
-            return false;
-        }
+//        if (!argument.containsKey("id")
+//                || !argument.containsKey("position")
+//                || !argument.containsKey("icon")) {
+//            return false;
+//        }
 
         String id = new TypeConverter<String>().getValue(argument, "id");
         if (TextUtils.isEmpty(id)) {
@@ -158,16 +158,20 @@ public class MarkerHandler extends OverlayHandler {
         // icon是必须的
         String icon = (String) argument.get("icon");
         byte[] bytes = (byte[]) argument.get("widget");
-        
+
+        Log.d("DoggieX","111111111111111111111111111111");
         if (!TextUtils.isEmpty(icon)) {
             if (!setMarkerOptions(argument, markerOptions, id, icon)) {
                 return false;
             }
             bundle.putString("icon", icon);
         }else if(null != bytes){
-            Bitmap b = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-            BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(b);
-            markerOptions.icon(bitmapDescriptor);
+            Log.d("DoggieX","222222222222222");
+            if (!setWidgetMarkerOptions(argument, markerOptions, id, bytes)) {
+                Log.d("DoggieX","3333333333333333333");
+                return false;
+            }
+            Log.d("DoggieX","4444444444444444");
         }
 
         Overlay overlay = mBaiduMap.addOverlay(markerOptions);
@@ -237,6 +241,94 @@ public class MarkerHandler extends OverlayHandler {
         }
 
         markerOptions.icon(bitmapDescriptor);
+        mMarkerBitmapMap.put(id, bitmapDescriptor);
+
+        //centerOffset
+        Map<String, Object> centerOffset =
+                new TypeConverter<Map<String, Object>>().getValue(markerOptionsMap, "centerOffset");
+        if (null != centerOffset) {
+            Double y = new TypeConverter<Double>().getValue(centerOffset, "y");
+            if (null != y) {
+                markerOptions.yOffset(y.intValue());
+            }
+        }
+
+        Boolean enable = new TypeConverter<Boolean>().getValue(markerOptionsMap, "enabled");
+        if (markerOptionsMap.containsKey("enabled")) {
+            if (Env.DEBUG) {
+                Log.d(TAG, "enbale" + enable);
+            }
+            markerOptions.clickable(enable);
+        }
+
+        Boolean draggable = new TypeConverter<Boolean>().getValue(markerOptionsMap, "draggable");
+        if (null != draggable) {
+            markerOptions.draggable(draggable);
+        }
+
+        Integer zIndex = new TypeConverter<Integer>().getValue(markerOptionsMap, "zIndex");
+        if (null != zIndex) {
+            markerOptions.zIndex(zIndex);
+        }
+
+        Boolean visible = new TypeConverter<Boolean>().getValue(markerOptionsMap, "visible");
+        if (null != visible) {
+            markerOptions.visible(visible);
+        }
+
+        Double scaleX = new TypeConverter<Double>().getValue(markerOptionsMap, "scaleX");
+        if (null != scaleX) {
+            markerOptions.scaleX(scaleX.floatValue());
+        }
+
+        Double scaleY = new TypeConverter<Double>().getValue(markerOptionsMap, "scaleY");
+        if (null != scaleY) {
+            markerOptions.scaleY(scaleY.floatValue());
+        }
+
+        Double alpha = new TypeConverter<Double>().getValue(markerOptionsMap, "alpha");
+        if (null != alpha) {
+            markerOptions.alpha(alpha.floatValue());
+        }
+
+        Boolean isPerspective =
+                new TypeConverter<Boolean>().getValue(markerOptionsMap, "isPerspective");
+        if (null != isPerspective) {
+            markerOptions.perspective(isPerspective);
+        }
+
+        return true;
+    }
+
+    /**
+     * 解析并设置markertions里的信息
+     *
+     * @return
+     */
+    private boolean setWidgetMarkerOptions(Map<String, Object> markerOptionsMap,
+                                     MarkerOptions markerOptions, String id, byte[] data) {
+
+        Map<String, Object> latlngMap = (Map<String, Object>) markerOptionsMap.get("position");
+
+        LatLng latLng = FlutterDataConveter.mapToLatlng(latlngMap);
+        if (null == latLng) {
+            if (Env.DEBUG) {
+                Log.d(TAG, "latLng is null");
+            }
+            return false;
+        }
+        markerOptions.position(latLng);
+
+        Bitmap b = BitmapFactory.decodeByteArray(data, 0, data.length);
+        BitmapDescriptor bitmapDescriptor = BitmapDescriptorFactory.fromBitmap(b);
+        markerOptions.icon(bitmapDescriptor);
+//        BitmapDescriptor bitmapDescriptor =
+//                BitmapDescriptorFactory.fromAsset("flutter_assets/" + icon);
+//        if (null == bitmapDescriptor) {
+//            return false;
+//        }
+
+//        markerOptions.icon(bitmapDescriptor);
         mMarkerBitmapMap.put(id, bitmapDescriptor);
 
         //centerOffset

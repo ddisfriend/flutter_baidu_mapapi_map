@@ -12,6 +12,7 @@ import 'package:flutter/rendering.dart';
 mixin MarkerBinding {
   Widget? markerView;
   BuildContext? bindingContext;
+  Function? refresh;
 
   Future<Uint8List?> widgetToData(Widget widget) async {
     final completer = Completer<Uint8List?>();
@@ -25,6 +26,8 @@ mixin MarkerBinding {
       key: globalKey,
       child: widget,
     );
+
+    refresh?.call();
 
     WidgetsBinding.instance?.addPostFrameCallback((timeStamp) async {
       var renderObject = globalKey.currentContext?.findRenderObject()

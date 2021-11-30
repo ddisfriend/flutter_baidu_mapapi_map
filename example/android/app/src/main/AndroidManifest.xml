@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.doggiex.flutter_baidu_mapapi_map_example">
    <application
+       android:name=".MyApplication"
         android:label="flutter_baidu_mapapi_map_example"
         android:icon="@mipmap/ic_launcher">
         <activity

@@ -50,6 +50,9 @@ class _BMFMapWidgetState extends State<BMFMapWidget> with MarkerBinding {
   @override
   void initState() {
     bindingContext = context;
+    refresh = () {
+      setState(() {});
+    };
     super.initState();
   }
 
