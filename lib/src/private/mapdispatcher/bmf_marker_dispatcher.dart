@@ -136,6 +136,26 @@ class BMFMarkerDispatcher {
     return result;
   }
 
+  /// map 指定删除marker
+  Future<bool> removeWidgetMarker(
+      MethodChannel _mapChannel, BMFWidgetMarker marker) async {
+    ArgumentError.checkNotNull(_mapChannel, "_mapChannel");
+    ArgumentError.checkNotNull(marker, "marker");
+
+    bool result = false;
+
+    /// TODO: - 为什么置空？
+    // marker.methodChannel = null;
+
+    try {
+      result = (await _mapChannel.invokeMethod(
+          BMFMarkerMethodId.kMapRemoveMarkerMethod, marker.toMap())) as bool;
+    } on PlatformException catch (e) {
+      print(e.toString());
+    }
+    return result;
+  }
+
   /// 批量删除markers
   Future<bool> removeMarkers(
       MethodChannel _mapChannel, List<BMFMarker> markers) async {

@@ -614,6 +614,16 @@ class BMFMapController {
         .removeMarker(_mapChannel, marker);
   }
 
+  /// 地图指定删除Marker
+  ///
+  /// [BMFMarker] marker 要移除的大头针
+  ///
+  /// bool 成功返回true 失败false
+  Future<bool> removeWidgetMarker(BMFWidgetMarker marker) async {
+    return await BMFMapDispatcherFactory.instance.markerDispatcher
+        .removeWidgetMarker(_mapChannel, marker);
+  }
+
   /// 地图批量删除Markers
   ///
   /// [BMFMarker]集合 markers 要移除的大头针list
