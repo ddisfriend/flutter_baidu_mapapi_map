@@ -49,6 +49,8 @@
         annotationView.hidePaopaoWhenDoubleTapOnMap = model.hidePaopaoWhenDoubleTapOnMap;
         annotationView.hidePaopaoWhenTwoFingersTapOnMap = model.hidePaopaoWhenTwoFingersTapOnMap;
         annotationView.displayPriority = (float)model.displayPriority;
+        FlutterStandardTypedData *flutterData = (FlutterStandardTypedData *)model.widget;
+        annotationView.image = [[UIImage alloc] initWithData:flutterData.data];
         return annotationView;
     }
     return nil;
