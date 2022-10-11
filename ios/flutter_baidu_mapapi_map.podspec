@@ -4,7 +4,7 @@
 #
 Pod::Spec.new do |s|
   s.name             = 'flutter_baidu_mapapi_map'
-  s.version          = '0.0.1'
+  s.version          = '3.2.0'
   s.summary          = 'flutter_baidu_mapapi_map fork'
   s.description      = <<-DESC
 flutter_baidu_mapapi_map fork
@@ -17,7 +17,7 @@ flutter_baidu_mapapi_map fork
   s.public_header_files = 'Classes/**/*.h'
   s.dependency 'Flutter'
   s.dependency 'flutter_baidu_mapapi_base'
-  s.dependency 'BaiduMapKit/Map','6.5.3'
+  s.dependency 'BaiduMapKit/Map','6.5.2'
   s.platform = :ios, '8.0'
   s.static_framework = true
 
